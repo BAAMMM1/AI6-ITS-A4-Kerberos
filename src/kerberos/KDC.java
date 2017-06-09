@@ -16,10 +16,10 @@ public class KDC extends Object {
 
 	/* *********** Datenbank-Simulation **************************** */
 
-	private String tgsName;  // TGS
+	private String tgsName; // TGS
 
 	private long tgsKey; // K(TGS)
-	
+
 	private String user; // C
 
 	private long userPasswordKey; // K(C)
@@ -31,7 +31,7 @@ public class KDC extends Object {
 	// Konstruktor
 	public KDC(String name) {
 		tgsName = name;
-		// Eigenen Key für TGS erzeugen (streng geheim!!!)
+		// Eigenen Key fï¿½r TGS erzeugen (streng geheim!!!)
 		tgsKey = generateSimpleKey();
 	}
 
@@ -41,19 +41,29 @@ public class KDC extends Object {
 
 	/* *********** Initialisierungs-Methoden **************************** */
 
+	/*
+	 * Diese Methode legt einen Server-Account in der Datenbank des KDC an und
+	 * gibt einen geheimen SchlÃ¼ssel fÃ¼r den Server zurÃ¼ck.
+	 */
 	public long serverRegistration(String sName) {
 		/*
-		 * Server in der Datenbank registrieren. Rückgabe: ein neuer geheimer
-		 * Schlüssel für den Server
+		 * Server in der Datenbank registrieren. Rï¿½ckgabe: ein neuer geheimer
+		 * Schlï¿½ssel fï¿½r den Server
 		 */
 		serverName = sName;
-		// Eigenen Key für Server erzeugen (streng geheim!!!)
+		// Eigenen Key fï¿½r Server erzeugen (streng geheim!!!)
 		serverKey = generateSimpleKey();
 		return serverKey;
 	}
 
+	/*
+	 * TrÃ¤gt einen User in den Benutzerdatenbank ein und erstellt ein Key fÃ¼r
+	 * das UserPassword.
+	 */
 	public void userRegistration(String userName, char[] password) {
-		/* User registrieren --> Eintrag des Usernamens in die Benutzerdatenbank */
+		/*
+		 * User registrieren --> Eintrag des Usernamens in die Benutzerdatenbank
+		 */
 		user = userName;
 		userPasswordKey = generateSimpleKeyForPassword(password);
 
@@ -64,7 +74,10 @@ public class KDC extends Object {
 	/* *********** AS-Modul: TGS - Ticketanfrage **************************** */
 
 	public TicketResponse requestTGSTicket(String userName, String tgsServerName, long nonce) {
-		/* Anforderung eines TGS-Tickets bearbeiten. Rückgabe: TicketResponse für die Anfrage */
+		/*
+		 * Anforderung eines TGS-Tickets bearbeiten. Rï¿½ckgabe: TicketResponse
+		 * fï¿½r die Anfrage
+		 */
 		long tgsSessionKey; // K(C,TGS)
 
 		TicketResponse tgsTicketResp = null;
@@ -74,8 +87,8 @@ public class KDC extends Object {
 		// TGS-Antwort zusammenbauen
 		if (userName.equals(user) && // Usernamen und Userpasswort in der
 		// Datenbank suchen!
-		tgsServerName.equals(tgsName)) {
-			// OK, neuen Session Key für Client und TGS generieren
+				tgsServerName.equals(tgsName)) {
+			// OK, neuen Session Key fï¿½r Client und TGS generieren
 			tgsSessionKey = generateSimpleKey();
 			currentTime = (new Date()).getTime(); // Anzahl mSek. seit
 			// 1.1.1970
@@ -83,13 +96,13 @@ public class KDC extends Object {
 			// Zuerst TGS-Ticket basteln ...
 			tgsTicket = new Ticket(user, tgsName, currentTime, currentTime + tenHoursInMillis, tgsSessionKey);
 
-			// ... dann verschlüsseln ...
+			// ... dann verschlï¿½sseln ...
 			tgsTicket.encrypt(tgsKey);
 
 			// ... dann Antwort erzeugen
 			tgsTicketResp = new TicketResponse(tgsSessionKey, nonce, tgsTicket);
 
-			// ... und verschlüsseln
+			// ... und verschlï¿½sseln
 			tgsTicketResp.encrypt(userPasswordKey);
 		}
 		return tgsTicketResp;
@@ -107,8 +120,8 @@ public class KDC extends Object {
 	/* *********** Hilfsmethoden **************************** */
 
 	private long getServerKey(String sName) {
-		// Liefert den zugehörigen Serverkey für den Servernamen zurück
-		// Wenn der Servername nicht bekannt, wird -1 zurückgegeben
+		// Liefert den zugehï¿½rigen Serverkey fï¿½r den Servernamen zurï¿½ck
+		// Wenn der Servername nicht bekannt, wird -1 zurï¿½ckgegeben
 		if (sName.equalsIgnoreCase(serverName)) {
 			System.out.println("Serverkey ok");
 			return serverKey;
@@ -119,7 +132,7 @@ public class KDC extends Object {
 	}
 
 	private long generateSimpleKeyForPassword(char[] pw) {
-		// Liefert einen Schlüssel für ein Passwort zurück, hier simuliert als
+		// Liefert einen Schlï¿½ssel fï¿½r ein Passwort zurï¿½ck, hier simuliert als
 		// long-Wert
 		long pwKey = 0;
 		for (int i = 0; i < pw.length; i++) {
@@ -129,7 +142,7 @@ public class KDC extends Object {
 	}
 
 	private long generateSimpleKey() {
-		// Liefert einen neuen geheimen Schlüssel, hier nur simuliert als
+		// Liefert einen neuen geheimen Schlï¿½ssel, hier nur simuliert als
 		// long-Wert
 		long sKey = (long) (100000000 * Math.random());
 		return sKey;
@@ -148,9 +161,9 @@ public class KDC extends Object {
 	}
 
 	boolean timeFresh(long testTime) {
-		// Wenn die übergebene Zeit nicht mehr als 5 Minuten von der aktuellen
+		// Wenn die ï¿½bergebene Zeit nicht mehr als 5 Minuten von der aktuellen
 		// Zeit abweicht,
-		// wird true zurückgegeben
+		// wird true zurï¿½ckgegeben
 		long currentTime = (new Date()).getTime(); // Anzahl mSek. seit
 		// 1.1.1970
 		if (Math.abs(currentTime - testTime) < fiveMinutesInMillis) {

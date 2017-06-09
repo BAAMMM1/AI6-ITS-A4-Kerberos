@@ -29,21 +29,25 @@ public class Server extends Object {
 		// Anmeldung des Servers beim KDC
 		myKDC = kdc;
 		myKey = myKDC.serverRegistration(myName);
-		System.out.println("Server " + myName
-				+ " erfolgreich registriert bei KDC " + myKDC.getName()
-				+ " mit ServerKey " + myKey);
+		System.out.println(
+				"Server " + myName + " erfolgreich registriert bei KDC " + myKDC.getName() + " mit ServerKey " + myKey);
 	}
 
-	public boolean requestService(Ticket srvTicket, Auth srvAuth,
-			String command, String parameter) {
-			/* ToDo */
+	public boolean requestService(Ticket srvTicket, Auth srvAuth, String command, String parameter) {
+		/* ToDo */
 	}
 
 	/* *********** Services **************************** */
 
+	/*
+	 * Diese Methode bekommt einen FilePath Ã¼bergeben, wenn dieser existiert
+	 * wird die Datei eingelesen und auf der Console ausgegeben.
+	 * 
+	 * Wird vom Client geÃ¶ffnet.
+	 */
 	private boolean showFile(String filePath) {
 		/*
-		 * Angegebene Datei auf der Konsole ausgeben. Rückgabe: Status der
+		 * Angegebene Datei auf der Konsole ausgeben. Rï¿½ckgabe: Status der
 		 * Operation
 		 */
 		String lineBuf = null;
@@ -54,9 +58,8 @@ public class Server extends Object {
 			System.out.println("Datei " + filePath + " existiert nicht!");
 		} else {
 			try {
-				// Datei öffnen und zeilenweise lesen
-				BufferedReader inFile = new BufferedReader(
-						new InputStreamReader(new FileInputStream(myFile)));
+				// Datei ï¿½ffnen und zeilenweise lesen
+				BufferedReader inFile = new BufferedReader(new InputStreamReader(new FileInputStream(myFile)));
 				lineBuf = inFile.readLine();
 				while (lineBuf != null) {
 					System.out.println(lineBuf);
@@ -65,8 +68,7 @@ public class Server extends Object {
 				inFile.close();
 				status = true;
 			} catch (IOException ex) {
-				System.out.println("Fehler beim Lesen der Datei " + filePath
-						+ ex);
+				System.out.println("Fehler beim Lesen der Datei " + filePath + ex);
 			}
 		}
 		return status;
@@ -76,31 +78,30 @@ public class Server extends Object {
 
 	private boolean timeValid(long lowerBound, long upperBound) {
 		/*
-		 * Wenn die aktuelle Zeit innerhalb der übergebenen Zeitgrenzen liegt,
-		 * wird true zurückgegeben
+		 * Wenn die aktuelle Zeit innerhalb der ï¿½bergebenen Zeitgrenzen liegt,
+		 * wird true zurï¿½ckgegeben
 		 */
 
 		long currentTime = (new Date()).getTime(); // Anzahl mSek. seit 1.1.1970
 		if (currentTime >= lowerBound && currentTime <= upperBound) {
 			return true;
 		} else {
-			System.out.println("-------- Time not valid: " + currentTime
-					+ " not in (" + lowerBound + "," + upperBound + ")!");
+			System.out.println(
+					"-------- Time not valid: " + currentTime + " not in (" + lowerBound + "," + upperBound + ")!");
 			return false;
 		}
 	}
 
 	boolean timeFresh(long testTime) {
 		/*
-		 * Wenn die übergebene Zeit nicht mehr als 5 Minuten von der aktuellen
-		 * Zeit abweicht, wird true zurückgegeben
+		 * Wenn die ï¿½bergebene Zeit nicht mehr als 5 Minuten von der aktuellen
+		 * Zeit abweicht, wird true zurï¿½ckgegeben
 		 */
 		long currentTime = (new Date()).getTime(); // Anzahl mSek. seit 1.1.1970
 		if (Math.abs(currentTime - testTime) < fiveMinutesInMillis) {
 			return true;
 		} else {
-			System.out.println("-------- Time not fresh: " + currentTime
-					+ " is current, " + testTime + " is old!");
+			System.out.println("-------- Time not fresh: " + currentTime + " is current, " + testTime + " is old!");
 			return false;
 		}
 	}

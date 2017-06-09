@@ -16,7 +16,7 @@ public class KerberosSim {
 
 		// Server initialisieren
 		myFileserver = new Server(serverName);
-		myFileserver.setupService(myKDC); // Schlüsselerzeugung und -austausch
+		myFileserver.setupService(myKDC); // Schlï¿½sselerzeugung und -austausch
 
 		// User-Account und Client erzeugen
 		myKDC.userRegistration(userName, password);
@@ -25,7 +25,7 @@ public class KerberosSim {
 
 	public char[] readPasswd(String userName) {
 		/*
-		 * Passworteingabe über modalen Dialog. Liefert ein Passwort oder null
+		 * Passworteingabe ï¿½ber modalen Dialog. Liefert ein Passwort oder null
 		 * bei Abbruch durch den Benutzer
 		 */
 		char[] password = null;
@@ -59,16 +59,32 @@ public class KerberosSim {
 
 		/* -------- Benutzersession simulieren ------ */
 		// Passwort vom Benutzer holen
-		System.out.println("Starte Login-Session für Benutzer: " + userName);
+		System.out.println("Starte Login-Session fï¿½r Benutzer: " + userName);
+
+		/*
+		 * Ã–ffnet das Passwortdialogfesnter um vom Benutzter das Passwort zu
+		 * erfragen.
+		 */
 		password = thisSession.readPasswd(userName);
+
+		/*
+		 * Falls ein Passwort Ã¼bergeben wurde. Melde den Benutzer beim KDC an
+		 * und lÃ¶sche das Ã¼bergebene Passwort im Hauptspeicher.
+		 * 
+		 *  Wenn der login fehlgeschlagen ist -> Ausgabe auf der Console.
+		 *  Falls der login erfolgreich war -> Zugriff auf den FileServer
+		 *  
+		 *  Falls Zugriff auf den Server fehlgeschlagen ist -> Ausgabe auf der Console
+		 */
 		if (password != null) {
 
 			// Benutzeranmeldung beim KDC
 			boolean loginOK = thisSession.myClient.login(userName, password);
 
-			// Passwort im Hauptspeicher löschen (überschreiben)!!
+			// Passwort im Hauptspeicher lï¿½schen (ï¿½berschreiben)!!
 			Arrays.fill(password, ' ');
 
+			
 			if (!loginOK) {
 				System.out.println("Login fehlgeschlagen!");
 			} else {

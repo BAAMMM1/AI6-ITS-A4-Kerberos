@@ -3,6 +3,10 @@
  */
 package kerberos;
 
+/**
+ * Wenn die Simulation Ã¼ber die Main in KerberosSim ausgefÃ¼hrt wird, wird vom Benutzer
+ * ein Passwort Ã¼ber diesen Dialog erfragt. Ansonsten hat diese Klasse keinen weiteren Nutzen.
+ */
 import java.awt.*;
 import java.awt.event.*;
 
@@ -37,7 +41,7 @@ public class PasswordDialog extends JDialog {
 	 * ----------------------------------------------------
 	 */
 	public PasswordDialog(String userName) {
-		// Modalen Dialog über Parameter festlegen
+		// Modalen Dialog ï¿½ber Parameter festlegen
 		super((Frame) null, "HAW Department Informatik WP IT-Sicherheit", true);
 
 		String okLabel = "  OK  ";
@@ -48,13 +52,11 @@ public class PasswordDialog extends JDialog {
 		Container contentPanel = getContentPane();
 		contentPanel.setLayout(new BorderLayout(100, 20));
 		// Text-Anzeige
-		JLabel labelMessage1 = new JLabel("<html><body><font size=\"+1\">"
-				+ "<em>Bitte Passwort für " + userName
-				+ " eingeben: </em></font><br>" + "</body></html>",
-				SwingConstants.CENTER);
+		JLabel labelMessage1 = new JLabel("<html><body><font size=\"+1\">" + "<em>Bitte Passwort fï¿½r " + userName
+				+ " eingeben: </em></font><br>" + "</body></html>", SwingConstants.CENTER);
 		contentPanel.add(labelMessage1, BorderLayout.NORTH);
 
-		// Füllregionen links und rechts
+		// Fï¿½llregionen links und rechts
 		JLabel leftDist = new JLabel(" ");
 		contentPanel.add(leftDist, BorderLayout.WEST);
 		JLabel rightDist = new JLabel(" ");
@@ -65,7 +67,7 @@ public class PasswordDialog extends JDialog {
 		// passwortField auf Fenster verankern
 		contentPanel.add(passwortField, BorderLayout.CENTER);
 
-		// Panel für die OK/Cancel-Buttons erzeugen
+		// Panel fï¿½r die OK/Cancel-Buttons erzeugen
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout());
 
@@ -98,7 +100,7 @@ public class PasswordDialog extends JDialog {
 	}
 
 	private void closeDialog() {
-		// Fenster schließen
+		// Fenster schlieï¿½en
 		setVisible(false);
 		dispose();
 	}
