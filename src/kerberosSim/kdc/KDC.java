@@ -148,22 +148,22 @@ public class KDC extends Object {
 			return null;
 
 		} else if (!user.equals(tgsTicket.getClientName())) {
-			System.out.println("tgsTicket Client is not in the database");
+			System.err.println("tgsTicket Client is not in the database");
 			return null;
 
 		} else if (!serverName.equals(serverName)) {
-			System.out.println("servername is not in the database");
+			System.err.println("servername is not in the database");
 			return null;
 
 			/*
 			 * Expiration check
 			 */
 		} else if (!this.timeFresh(tgsAuth.getCurrentTime())) {
-			tgsAuth.printError("");
+			tgsAuth.printError("error - authentification - time expirated");
 			return null;
 
 		} else if (!this.timeValid(tgsTicket.getStartTime(), tgsTicket.getEndTime())) {
-			tgsTicket.printError("");
+			tgsTicket.printError("error - tgsTicket - time expirated");
 			return null;
 
 		} else {

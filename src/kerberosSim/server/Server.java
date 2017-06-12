@@ -39,54 +39,64 @@ public class Server extends Object {
 				"Server " + myName + " erfolgreich registriert bei KDC " + myKDC.getName() + " mit ServerKey " + myKey);
 	}
 
+	/**
+	 * Diese Methode bearbeitet ein Server-Service-Request.
+	 * 
+	 * Aufgabe: „showFile“‐Befehl mit Filepath als Parameter ausführen, d.h.
+	 * Dateiinhalt zeilenweise auf der Konsole ausgeben.
+	 * 
+	 * @param srvTicket
+	 * @param srvAuth
+	 * @param command
+	 * @param parameter
+	 * @return Status (Befehlsausgabe ok / fehlgeschlagen)
+	 */
 	public boolean requestService(Ticket srvTicket, Auth srvAuth, String command, String parameter) {
 		System.out.println("request service from server");
 
-		
 		/*
 		 * ServerTicket und ServerAuthentifikation überprüfen
 		 */
-		if(!srvTicket.decrypt(myKey)){
+		if (!srvTicket.decrypt(myKey)) {
 			srvTicket.printError("error - serverTicket: myKey is invalid");
 			return false;
-			
-		} else if(!srvAuth.decrypt(srvTicket.getSessionKey())){
+
+		} else if (!srvAuth.decrypt(srvTicket.getSessionKey())) {
 			srvAuth.printError("error - server auth: sessionKey is invald");
 			return false;
-			
-		} else if(!srvAuth.getClientName().equals(srvTicket.getClientName())){
-			srvAuth.printError("error - authentification: serverTicket user is not equal with serverAuthentification user");
+
+		} else if (!srvAuth.getClientName().equals(srvTicket.getClientName())) {
+			srvAuth.printError(
+					"error - authentification: serverTicket user is not equal with serverAuthentification user");
 			return false;
-		} else if(!myName.equals(srvTicket.getServerName())){
+		} else if (!myName.equals(srvTicket.getServerName())) {
 			srvTicket.printError("error - server: serverTicket is for another Server");
 			return false;
-			
-		} else if(!this.timeValid(srvTicket.getStartTime(), srvTicket.getEndTime())){
+
+		} else if (!this.timeValid(srvTicket.getStartTime(), srvTicket.getEndTime())) {
 			srvTicket.printError("error - server: ticket is out of time");
 			return false;
-			
-		} else if(!this.timeFresh(srvAuth.getCurrentTime())){
+
+		} else if (!this.timeFresh(srvAuth.getCurrentTime())) {
 			srvAuth.printError("error - authenfitigcation: authentification is out of time");
 			return false;
-			
+
 		} else {
-			
+
 			/*
 			 * Alles gut gegangen
 			 */
 			srvTicket.print();
 			srvAuth.print();
 		}
-		
-		
-		
-		if(COMMAND_SHOWFILE.equals(command)){
+
+		if (COMMAND_SHOWFILE.equals(command)) {
 			return this.showFile(parameter);
-			
+
 		} else {
 			return false;
-		}		
-		
+		}
+
 	}
 
 	/* *********** Services **************************** */
