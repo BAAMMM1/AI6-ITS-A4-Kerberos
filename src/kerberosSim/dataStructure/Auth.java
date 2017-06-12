@@ -1,4 +1,4 @@
-package kerberos;
+package kerberosSim.dataStructure;
 
 /* Simulation einer Kerberos-Session mit Zugriff auf einen Fileserver
  /* Auth-Klasse (Authentification)
@@ -12,13 +12,13 @@ public class Auth extends Object {
 
 	private long myCurrentTime; // Konstruktor-Parameter
 
-	// Geheimer Schlüssel, mit dem die Authentifikation (simuliert)
-	// verschlüsselt ist:
+	// Geheimer Schlï¿½ssel, mit dem die Authentifikation (simuliert)
+	// verschlï¿½sselt ist:
 	private long myAuthKey;
 
 	private boolean isEncryptedState; // Aktueller Zustand des Objekts
 
-	// Kalenderobjekt zur Zeitumrechnung (für Testausgaben)
+	// Kalenderobjekt zur Zeitumrechnung (fï¿½r Testausgaben)
 	private Calendar cal;
 
 	// Konstruktor
@@ -27,30 +27,30 @@ public class Auth extends Object {
 		myCurrentTime = currentTime;
 		myAuthKey = -1;
 		isEncryptedState = false;
-		cal = new GregorianCalendar(); // für Testausgaben
+		cal = new GregorianCalendar(); // fï¿½r Testausgaben
 	}
 
 	public String getClientName() {
 		if (isEncryptedState) {
-			printError("Zugriff auf verschlüsselte Authentifikation (getClientName)");
+			printError("Zugriff auf verschlï¿½sselte Authentifikation (getClientName)");
 		}
 		return myClientName;
 	}
 
 	public long getCurrentTime() {
 		if (isEncryptedState) {
-			printError("Zugriff auf verschlüsselte Authentifikation (getCurrentTime)");
+			printError("Zugriff auf verschlï¿½sselte Authentifikation (getCurrentTime)");
 		}
 		return myCurrentTime;
 	}
 
 	public boolean encrypt(long key) {
-		// Authentifikation mit dem Key verschlüsseln.
-		// Falls die Authentifikation bereits verschlüsselt ist, wird false
-		// zurückgegeben.
+		// Authentifikation mit dem Key verschlï¿½sseln.
+		// Falls die Authentifikation bereits verschlï¿½sselt ist, wird false
+		// zurï¿½ckgegeben.
 		boolean encOK = false;
 		if (isEncryptedState) {
-			printError("Auth ist bereits verschlüsselt");
+			printError("Auth ist bereits verschlï¿½sselt");
 		} else {
 			myAuthKey = key;
 			isEncryptedState = true;
@@ -60,16 +60,16 @@ public class Auth extends Object {
 	}
 
 	public boolean decrypt(long key) {
-		// Authentifikation mit dem Key entschlüsseln.
+		// Authentifikation mit dem Key entschlï¿½sseln.
 		// Falls der Key falsch ist oder
-		// falls die Authentifikation bereits entschlüsselt ist, wird false
-		// zurückgegeben.
+		// falls die Authentifikation bereits entschlï¿½sselt ist, wird false
+		// zurï¿½ckgegeben.
 		boolean decOK = false;
 		if (!isEncryptedState) {
-			printError("Auth ist bereits entschlüsselt");
+			printError("Auth ist bereits entschlï¿½sselt");
 		}
 		if (myAuthKey != key) {
-			printError("Auth-Entschlüsselung mit key " + key
+			printError("Auth-Entschlï¿½sselung mit key " + key
 					+ " ist fehlgeschlagen");
 		} else {
 			isEncryptedState = false;
@@ -79,8 +79,8 @@ public class Auth extends Object {
 	}
 
 	public boolean isEncrypted() {
-		// Aktuellen Zustand zurückgeben:
-		// verschlüsselt (true) / entschlüsselt (false)
+		// Aktuellen Zustand zurï¿½ckgeben:
+		// verschlï¿½sselt (true) / entschlï¿½sselt (false)
 		return isEncryptedState;
 	}
 
@@ -92,14 +92,14 @@ public class Auth extends Object {
 	}
 
 	public void print() {
-		System.out.println("********* Authentifikation für " + myClientName
+		System.out.println("********* Authentifikation fï¿½r " + myClientName
 				+ " *******");
 		System.out.println("CurrentTime: " + getDateString(myCurrentTime));
 		System.out.println("Auth Key: " + myAuthKey);
 		if (isEncryptedState) {
-			System.out.println("Auth-Zustand: verschlüsselt (encrypted)!");
+			System.out.println("Auth-Zustand: verschlï¿½sselt (encrypted)!");
 		} else {
-			System.out.println("Auth-Zustand: entschlüsselt (decrypted)!");
+			System.out.println("Auth-Zustand: entschlï¿½sselt (decrypted)!");
 		}
 		System.out.println();
 	}

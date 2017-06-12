@@ -1,7 +1,7 @@
 /**
  * 
  */
-package kerberos;
+package kerberosSim.gui;
 
 /**
  * Wenn die Simulation über die Main in KerberosSim ausgeführt wird, wird vom Benutzer

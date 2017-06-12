@@ -1,16 +1,22 @@
-package kerberos;
+package kerberosSim.server;
 
 /* Simulation einer Kerberos-Session mit Zugriff auf einen Fileserver
  /* Server-Klasse
  */
 
 import java.util.*;
+
+import kerberosSim.dataStructure.Auth;
+import kerberosSim.dataStructure.Ticket;
+import kerberosSim.kdc.KDC;
+
 import java.io.*;
 
 public class Server extends Object {
 
 	private final long fiveMinutesInMillis = 300000; // 5 Minuten in
 														// Millisekunden
+	private static final String COMMAND_SHOWFILE = "showFile";
 
 	private String myName; // Konstruktor-Parameter
 	private KDC myKDC; // wird bei KDC-Registrierung gespeichert
@@ -34,7 +40,53 @@ public class Server extends Object {
 	}
 
 	public boolean requestService(Ticket srvTicket, Auth srvAuth, String command, String parameter) {
-		/* ToDo */
+		System.out.println("request service from server");
+
+		
+		/*
+		 * ServerTicket und ServerAuthentifikation überprüfen
+		 */
+		if(!srvTicket.decrypt(myKey)){
+			srvTicket.printError("error - serverTicket: myKey is invalid");
+			return false;
+			
+		} else if(!srvAuth.decrypt(srvTicket.getSessionKey())){
+			srvAuth.printError("error - server auth: sessionKey is invald");
+			return false;
+			
+		} else if(!srvAuth.getClientName().equals(srvTicket.getClientName())){
+			srvAuth.printError("error - authentification: serverTicket user is not equal with serverAuthentification user");
+			return false;
+		} else if(!myName.equals(srvTicket.getServerName())){
+			srvTicket.printError("error - server: serverTicket is for another Server");
+			return false;
+			
+		} else if(!this.timeValid(srvTicket.getStartTime(), srvTicket.getEndTime())){
+			srvTicket.printError("error - server: ticket is out of time");
+			return false;
+			
+		} else if(!this.timeFresh(srvAuth.getCurrentTime())){
+			srvAuth.printError("error - authenfitigcation: authentification is out of time");
+			return false;
+			
+		} else {
+			
+			/*
+			 * Alles gut gegangen
+			 */
+			srvTicket.print();
+			srvAuth.print();
+		}
+		
+		
+		
+		if(COMMAND_SHOWFILE.equals(command)){
+			return this.showFile(parameter);
+			
+		} else {
+			return false;
+		}		
+		
 	}
 
 	/* *********** Services **************************** */
@@ -92,7 +144,7 @@ public class Server extends Object {
 		}
 	}
 
-	boolean timeFresh(long testTime) {
+	private boolean timeFresh(long testTime) {
 		/*
 		 * Wenn die �bergebene Zeit nicht mehr als 5 Minuten von der aktuellen
 		 * Zeit abweicht, wird true zur�ckgegeben

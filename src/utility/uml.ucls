@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.11" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="true" nesting-relationships="true" router="FAN">  
-  <class id="1" language="java" name="kerberos.KerberosSim" project="AI6-ITS-A4-Kerberos" 
-    file="/AI6-ITS-A4-Kerberos/src/kerberos/KerberosSim.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="1" language="java" name="kerberosSim.KerberosSim" project="AI6-ITS-A4-Kerberos" 
+    file="/AI6-ITS-A4-Kerberos/src/kerberosSim/KerberosSim.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="420" y="-47"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -10,8 +10,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="kerberos.Server" project="AI6-ITS-A4-Kerberos" 
-    file="/AI6-ITS-A4-Kerberos/src/kerberos/Server.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="2" language="java" name="kerberosSim.server.Server" project="AI6-ITS-A4-Kerberos" 
+    file="/AI6-ITS-A4-Kerberos/src/kerberosSim/server/Server.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="729" y="175"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -19,8 +19,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="kerberos.KDC" project="AI6-ITS-A4-Kerberos" 
-    file="/AI6-ITS-A4-Kerberos/src/kerberos/KDC.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="3" language="java" name="kerberosSim.kdc.KDC" project="AI6-ITS-A4-Kerberos" 
+    file="/AI6-ITS-A4-Kerberos/src/kerberosSim/kdc/KDC.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="419" y="232"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -28,8 +28,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="kerberos.Client" project="AI6-ITS-A4-Kerberos" 
-    file="/AI6-ITS-A4-Kerberos/src/kerberos/Client.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="4" language="java" name="kerberosSim.client.Client" project="AI6-ITS-A4-Kerberos" 
+    file="/AI6-ITS-A4-Kerberos/src/kerberosSim/client/Client.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="155" y="164"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -37,51 +37,143 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <dependency id="5">    
+  <class id="5" language="java" name="kerberosSim.dataStructure.TicketResponse" project="AI6-ITS-A4-Kerberos" 
+    file="/AI6-ITS-A4-Kerberos/src/kerberosSim/dataStructure/TicketResponse.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="153" y="552"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="kerberosSim.dataStructure.Ticket" project="AI6-ITS-A4-Kerberos" 
+    file="/AI6-ITS-A4-Kerberos/src/kerberosSim/dataStructure/Ticket.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="731" y="553"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="kerberosSim.dataStructure.Auth" project="AI6-ITS-A4-Kerberos" 
+    file="/AI6-ITS-A4-Kerberos/src/kerberosSim/dataStructure/Auth.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="417" y="423"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="false" package="false" protected="false" private="false" static="true"/>      
+      <operations public="false" package="false" protected="false" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <dependency id="8">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="9">    
     <bendpoint x="429" y="72"/>    
     <end type="SOURCE" refId="4"/>    
     <end type="TARGET" refId="2"/>  
   </dependency>  
-  <association id="6">    
+  <association id="10">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="11" name="myResponseTicket"/>      
+      <multiplicity id="12" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="13">    
+    <bendpoint x="301" y="484"/>    
     <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="7" name="myKDC"/>      
-      <multiplicity id="8" minimum="0" maximum="1"/>    
+      <attribute id="14" name="tgsTicket"/>      
+      <multiplicity id="15" minimum="0" maximum="1"/>    
     </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
+    <end type="TARGET" refId="6" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="9">    
+  <association id="16">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="10" name="myKDC"/>      
-      <multiplicity id="11" minimum="0" maximum="1"/>    
+      <attribute id="17" name="myKDC">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="18" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="12">    
+  <dependency id="19">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <association id="20">    
     <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="13" name="myKDC"/>      
-      <multiplicity id="14" minimum="0" maximum="1"/>    
+      <attribute id="21" name="myKDC">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="22" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="15">    
+  <association id="23">    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="16" name="myFileserver"/>      
-      <multiplicity id="17" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="18">    
-    <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="19" name="myClient"/>      
-      <multiplicity id="20" minimum="0" maximum="1"/>    
+      <attribute id="24" name="myClient">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="25" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="4" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
+  <dependency id="26">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="7"/>  
+  </dependency>  
+  <dependency id="27">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <association id="28">    
+    <end type="SOURCE" refId="1" navigable="false">      
+      <attribute id="29" name="myFileserver">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="30" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="31">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="7"/>  
+  </dependency>  
+  <association id="32">    
+    <end type="SOURCE" refId="4" navigable="false">      
+      <attribute id="33" name="myKDC">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="34" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <dependency id="35">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="7"/>  
+  </dependency>  
+  <dependency id="36">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    

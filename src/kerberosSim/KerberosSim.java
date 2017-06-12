@@ -1,8 +1,13 @@
-package kerberos;
+package kerberosSim;
 
 /* Simulation einer Kerberos-Session mit Zugriff auf einen Fileserver */
 
 import java.util.*;
+
+import kerberosSim.client.Client;
+import kerberosSim.gui.PasswordDialog;
+import kerberosSim.kdc.KDC;
+import kerberosSim.server.Server;
 
 public class KerberosSim {
 

@@ -1,4 +1,4 @@
-package kerberos;
+package kerberosSim.dataStructure;
 
 /* Simulation einer Kerberos-Session mit Zugriff auf einen Fileserver
  /* TicketResponse-Klasse
@@ -12,8 +12,8 @@ public class TicketResponse extends Object {
 
 	private Ticket myResponseTicket; // Konstruktor-Parameter
 
-	// Geheimer Schlüssel, mit dem diese Antwort (Response) (simuliert)
-	// verschlüsselt ist:
+	// Geheimer Schlï¿½ssel, mit dem diese Antwort (Response) (simuliert)
+	// verschlï¿½sselt ist:
 	private long myResponseKey;
 
 	private boolean isEncryptedState; // Aktueller Zustand des Objekts
@@ -29,32 +29,32 @@ public class TicketResponse extends Object {
 
 	public long getSessionKey() {
 		if (isEncryptedState) {
-			printError("Zugriff auf verschlüsselte Ticket-Response (getSessionKey)");
+			printError("Zugriff auf verschlï¿½sselte Ticket-Response (getSessionKey)");
 		}
 		return mySessionKey;
 	}
 
 	public long getNonce() {
 		if (isEncryptedState) {
-			printError("Zugriff auf verschlüsselte Ticket-Response (getNonce)");
+			printError("Zugriff auf verschlï¿½sselte Ticket-Response (getNonce)");
 		}
 		return myNonce;
 	}
 
 	public Ticket getResponseTicket() {
 		if (isEncryptedState) {
-			printError("Zugriff auf verschlüsselte Ticket-Response (getResponseTicket)");
+			printError("Zugriff auf verschlï¿½sselte Ticket-Response (getResponseTicket)");
 		}
 		return myResponseTicket;
 	}
 
 	public boolean encrypt(long key) {
-		// TicketResponse mit dem Key verschlüsseln.
-		// Falls die TicketResponse bereits verschlüsselt ist, wird false
-		// zurückgegeben.
+		// TicketResponse mit dem Key verschlï¿½sseln.
+		// Falls die TicketResponse bereits verschlï¿½sselt ist, wird false
+		// zurï¿½ckgegeben.
 		boolean encOK = false;
 		if (isEncryptedState) {
-			printError("TicketResponse ist bereits verschlüsselt");
+			printError("TicketResponse ist bereits verschlï¿½sselt");
 		} else {
 			myResponseKey = key;
 			isEncryptedState = true;
@@ -64,16 +64,16 @@ public class TicketResponse extends Object {
 	}
 
 	public boolean decrypt(long key) {
-		// TicketResponse mit dem Key entschlüsseln.
+		// TicketResponse mit dem Key entschlï¿½sseln.
 		// Falls der Key falsch ist oder
-		// falls die TicketResponse bereits entschlüsselt ist, wird false
-		// zurückgegeben.
+		// falls die TicketResponse bereits entschlï¿½sselt ist, wird false
+		// zurï¿½ckgegeben.
 		boolean decOK = false;
 		if (!isEncryptedState) {
-			printError("TicketResponse ist bereits entschlüsselt");
+			printError("TicketResponse ist bereits entschlï¿½sselt");
 		}
 		if (myResponseKey != key) {
-			printError("TicketResponse-Entschlüsselung mit key " + key
+			printError("TicketResponse-Entschlï¿½sselung mit key " + key
 					+ " ist fehlgeschlagen");
 		} else {
 			isEncryptedState = false;
@@ -83,8 +83,8 @@ public class TicketResponse extends Object {
 	}
 
 	public boolean isEncrypted() {
-		// Aktuellen Zustand zurückgeben:
-		// verschlüsselt (true) / entschlüsselt (false)
+		// Aktuellen Zustand zurï¿½ckgeben:
+		// verschlï¿½sselt (true) / entschlï¿½sselt (false)
 		return isEncryptedState;
 	}
 
@@ -103,10 +103,10 @@ public class TicketResponse extends Object {
 		System.out.println("Response Key: " + myResponseKey);
 		if (isEncryptedState) {
 			System.out
-					.println("TicketResponse-Zustand: verschlüsselt (encrypted)!");
+					.println("TicketResponse-Zustand: verschlï¿½sselt (encrypted)!");
 		} else {
 			System.out
-					.println("TicketResponse-Zustand: entschlüsselt (decrypted)!");
+					.println("TicketResponse-Zustand: entschlï¿½sselt (decrypted)!");
 		}
 		System.out.println();
 	}

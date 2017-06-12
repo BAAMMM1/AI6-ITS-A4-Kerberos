@@ -1,10 +1,14 @@
-package kerberos;
+package kerberosSim.kdc;
 
 /* Simulation einer Kerberos-Session mit Zugriff auf einen Fileserver
  /* KDC-Klasse
  */
 
 import java.util.*;
+
+import kerberosSim.dataStructure.Auth;
+import kerberosSim.dataStructure.Ticket;
+import kerberosSim.dataStructure.TicketResponse;
 
 public class KDC extends Object {
 
@@ -113,8 +117,82 @@ public class KDC extends Object {
 	 * ****************************
 	 */
 
+	/**
+	 * Diese Mehtode bearbeitet die Anfragen eines Server-Tickets. Gehört zur
+	 * TGS-Funktionalität.
+	 * 
+	 * @param tgsTicket
+	 * @param tgsAuth
+	 * @param serverName
+	 * @param nonce
+	 * @return TicketRespone für die Anfrage
+	 */
 	public TicketResponse requestServerTicket(Ticket tgsTicket, Auth tgsAuth, String serverName, long nonce) {
-		/* ToDo */
+		System.out.println("KDC: requestServerTicket -------------------->");
+		/*
+		 * Dycrypten
+		 */
+		if (!tgsTicket.decrypt(this.tgsKey)) {
+			tgsTicket.printError("error - tgsKey: key is invalid");
+			return null;
+
+		} else if (!tgsAuth.decrypt(tgsTicket.getSessionKey())) {
+			tgsAuth.printError("error - tgsSessionKey: key is invalid");
+			return null;
+
+			/*
+			 * Authentification check
+			 */
+		} else if (!tgsAuth.getClientName().equals(tgsTicket.getClientName())) {
+			tgsAuth.printError("error - authentification: authentification client is invalid");
+			return null;
+
+		} else if (!user.equals(tgsTicket.getClientName())) {
+			System.out.println("tgsTicket Client is not in the database");
+			return null;
+
+		} else if (!serverName.equals(serverName)) {
+			System.out.println("servername is not in the database");
+			return null;
+
+			/*
+			 * Expiration check
+			 */
+		} else if (!this.timeFresh(tgsAuth.getCurrentTime())) {
+			tgsAuth.printError("");
+			return null;
+
+		} else if (!this.timeValid(tgsTicket.getStartTime(), tgsTicket.getEndTime())) {
+			tgsTicket.printError("");
+			return null;
+
+		} else {
+
+			/*
+			 * All is alright
+			 * 
+			 * ServerTicket
+			 */
+			long sessionKeyServer = this.generateSimpleKey();
+
+			Ticket serverTicket = new Ticket(tgsTicket.getClientName(), serverName, System.currentTimeMillis(),
+					System.currentTimeMillis() + this.fiveMinutesInMillis, sessionKeyServer);
+
+			/*
+			 * Encrypt with serverKey
+			 */
+			serverTicket.encrypt(this.getServerKey(serverName));
+
+			/*
+			 * TicketRespone
+			 */
+			TicketResponse ticketResponse = new TicketResponse(sessionKeyServer, nonce, serverTicket);
+
+			ticketResponse.encrypt(tgsTicket.getSessionKey());
+
+			return ticketResponse;
+		}
+
 	}
 
 	/* *********** Hilfsmethoden **************************** */
@@ -148,7 +226,7 @@ public class KDC extends Object {
 		return sKey;
 	}
 
-	boolean timeValid(long lowerBound, long upperBound) {
+	private boolean timeValid(long lowerBound, long upperBound) {
 		long currentTime = (new Date()).getTime(); // Anzahl mSek. seit
 		// 1.1.1970
 		if (currentTime >= lowerBound && currentTime <= upperBound) {
@@ -160,7 +238,7 @@ public class KDC extends Object {
 		}
 	}
 
-	boolean timeFresh(long testTime) {
+	private boolean timeFresh(long testTime) {
 		// Wenn die �bergebene Zeit nicht mehr als 5 Minuten von der aktuellen
 		// Zeit abweicht,
 		// wird true zur�ckgegeben
