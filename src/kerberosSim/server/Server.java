@@ -42,43 +42,61 @@ public class Server extends Object {
 	/**
 	 * Diese Methode bearbeitet ein Server-Service-Request.
 	 * 
-	 * Aufgabe: „showFile“‐Befehl mit Filepath als Parameter ausführen, d.h.
+	 * Aufgabe: â€žshowFileâ€œâ€�Befehl mit Filepath als Parameter ausfÃ¼hren, d.h.
 	 * Dateiinhalt zeilenweise auf der Konsole ausgeben.
 	 * 
 	 * @param srvTicket
-	 * @param srvAuth
+	 * @param auth
 	 * @param command
 	 * @param parameter
 	 * @return Status (Befehlsausgabe ok / fehlgeschlagen)
 	 */
-	public boolean requestService(Ticket srvTicket, Auth srvAuth, String command, String parameter) {
+	public boolean requestService(Ticket srvTicket, Auth auth, String command, String parameter) {
 		System.out.println("request service from server");
 
 		/*
-		 * ServerTicket und ServerAuthentifikation überprüfen
+		 * ServerTicket und Authentifikation Ã¼berprÃ¼fen
+		 * Erhalten von 5.
+		 */
+		
+		/*
+		 * Entschlüsseln des Serverticket mit dem Key(Server)
 		 */
 		if (!srvTicket.decrypt(myKey)) {
 			srvTicket.printError("error - serverTicket: myKey is invalid");
 			return false;
 
-		} else if (!srvAuth.decrypt(srvTicket.getSessionKey())) {
-			srvAuth.printError("error - server auth: sessionKey is invald");
+			/*
+			 * Entschlüsseln der Authentifikation des Client mit dem Sessionkey(Client, Server)
+			 */
+		} else if (!auth.decrypt(srvTicket.getSessionKey())) {
+			auth.printError("error - server auth: sessionKey is invald");
 			return false;
 
-		} else if (!srvAuth.getClientName().equals(srvTicket.getClientName())) {
-			srvAuth.printError(
+			/*
+			 * Validität der Authentifikation überpüfen
+			 */
+		} else if (!auth.getClientName().equals(srvTicket.getClientName())) {
+			auth.printError(
 					"error - authentification: serverTicket user is not equal with serverAuthentification user");
 			return false;
+			
+			/*
+			 * Überprüfen, ob der Server mit dem Server im Serverticket übereinstimmt
+			 */
 		} else if (!myName.equals(srvTicket.getServerName())) {
 			srvTicket.printError("error - server: serverTicket is for another Server");
 			return false;
 
+			/*
+			 * Time überprüfen
+			 */
 		} else if (!this.timeValid(srvTicket.getStartTime(), srvTicket.getEndTime())) {
 			srvTicket.printError("error - server: ticket is out of time");
 			return false;
 
-		} else if (!this.timeFresh(srvAuth.getCurrentTime())) {
-			srvAuth.printError("error - authenfitigcation: authentification is out of time");
+		} else if (!this.timeFresh(auth.getCurrentTime())) {
+			auth.printError("error - authenfitigcation: authentification is out of time");
 			return false;
 
 		} else {
@@ -87,29 +105,34 @@ public class Server extends Object {
 			 * Alles gut gegangen
 			 */
 			srvTicket.print();
-			srvAuth.print();
+			auth.print();
+			
+			/*
+			 * Kommando ausführen
+			 */
+			if (COMMAND_SHOWFILE.equals(command)) {
+				return this.showFile(parameter);
+
+			} else {
+				return false;
+			}
 		}
 
-		if (COMMAND_SHOWFILE.equals(command)) {
-			return this.showFile(parameter);
-
-		} else {
-			return false;
-		}
+		
 
 	}
 
 	/* *********** Services **************************** */
 
 	/*
-	 * Diese Methode bekommt einen FilePath übergeben, wenn dieser existiert
+	 * Diese Methode bekommt einen FilePath Ã¼bergeben, wenn dieser existiert
 	 * wird die Datei eingelesen und auf der Console ausgegeben.
 	 * 
-	 * Wird vom Client geöffnet.
+	 * Wird vom Client geÃ¶ffnet.
 	 */
 	private boolean showFile(String filePath) {
 		/*
-		 * Angegebene Datei auf der Konsole ausgeben. R�ckgabe: Status der
+		 * Angegebene Datei auf der Konsole ausgeben. Rï¿½ckgabe: Status der
 		 * Operation
 		 */
 		String lineBuf = null;
@@ -120,7 +143,7 @@ public class Server extends Object {
 			System.out.println("Datei " + filePath + " existiert nicht!");
 		} else {
 			try {
-				// Datei �ffnen und zeilenweise lesen
+				// Datei ï¿½ffnen und zeilenweise lesen
 				BufferedReader inFile = new BufferedReader(new InputStreamReader(new FileInputStream(myFile)));
 				lineBuf = inFile.readLine();
 				while (lineBuf != null) {
@@ -140,8 +163,8 @@ public class Server extends Object {
 
 	private boolean timeValid(long lowerBound, long upperBound) {
 		/*
-		 * Wenn die aktuelle Zeit innerhalb der �bergebenen Zeitgrenzen liegt,
-		 * wird true zur�ckgegeben
+		 * Wenn die aktuelle Zeit innerhalb der ï¿½bergebenen Zeitgrenzen liegt,
+		 * wird true zurï¿½ckgegeben
 		 */
 
 		long currentTime = (new Date()).getTime(); // Anzahl mSek. seit 1.1.1970
@@ -156,8 +179,8 @@ public class Server extends Object {
 
 	private boolean timeFresh(long testTime) {
 		/*
-		 * Wenn die �bergebene Zeit nicht mehr als 5 Minuten von der aktuellen
-		 * Zeit abweicht, wird true zur�ckgegeben
+		 * Wenn die ï¿½bergebene Zeit nicht mehr als 5 Minuten von der aktuellen
+		 * Zeit abweicht, wird true zurï¿½ckgegeben
 		 */
 		long currentTime = (new Date()).getTime(); // Anzahl mSek. seit 1.1.1970
 		if (Math.abs(currentTime - testTime) < fiveMinutesInMillis) {

@@ -79,6 +79,10 @@ public class KDC extends Object {
 
 	public TicketResponse requestTGSTicket(String userName, String tgsServerName, long nonce) {
 		/*
+		 * Hier sind wir im KDC AS Schick 2. zurück
+		 */
+
+		/*
 		 * Anforderung eines TGS-Tickets bearbeiten. Rï¿½ckgabe: TicketResponse
 		 * fï¿½r die Anfrage
 		 */
@@ -130,33 +134,48 @@ public class KDC extends Object {
 	public TicketResponse requestServerTicket(Ticket tgsTicket, Auth tgsAuth, String serverName, long nonce) {
 		System.out.println("KDC: requestServerTicket -------------------->");
 		/*
-		 * Dycrypten
+		 * Hier sind wir im KDC TGS-Server 3. Erhalten und prüfen
+		 */
+
+		/*
+		 * Entschlüsseln des TGS-Ticket mit dem Key des TGS-Server
 		 */
 		if (!tgsTicket.decrypt(this.tgsKey)) {
 			tgsTicket.printError("error - tgsKey: key is invalid");
 			return null;
 
+			/*
+			 * Entschlüsseln der Authentifikation des Client mit dem
+			 * TGS-Sessionkey
+			 */
 		} else if (!tgsAuth.decrypt(tgsTicket.getSessionKey())) {
 			tgsAuth.printError("error - tgsSessionKey: key is invalid");
 			return null;
 
 			/*
-			 * Authentification check
+			 * Authentification überprüfen: Übereinstimmt der TGS-Ticket User
+			 * mit dem Authentifikation User
 			 */
 		} else if (!tgsAuth.getClientName().equals(tgsTicket.getClientName())) {
 			tgsAuth.printError("error - authentification: authentification client is invalid");
 			return null;
 
+			/*
+			 * Ist der TGS-Ticket User in der Datenbank des KDC vorhanden?
+			 */
 		} else if (!user.equals(tgsTicket.getClientName())) {
 			System.err.println("tgsTicket Client is not in the database");
 			return null;
 
-		} else if (!serverName.equals(serverName)) {
+			/*
+			 * Ist der Server vom Client angefordert in der Datenbank bekannt?
+			 */
+		} else if (!this.serverName.equals(serverName)) {
 			System.err.println("servername is not in the database");
 			return null;
 
 			/*
-			 * Expiration check
+			 * Ist die Zeit abgelaufen?
 			 */
 		} else if (!this.timeFresh(tgsAuth.getCurrentTime())) {
 			tgsAuth.printError("error - authentification - time expirated");
@@ -169,25 +188,33 @@ public class KDC extends Object {
 		} else {
 
 			/*
-			 * All is alright
-			 * 
-			 * ServerTicket
+			 * Alles ist gut 4. Zusammenbauen und los schicken
 			 */
-			long sessionKeyServer = this.generateSimpleKey();
-
-			Ticket serverTicket = new Ticket(tgsTicket.getClientName(), serverName, System.currentTimeMillis(),
-					System.currentTimeMillis() + this.fiveMinutesInMillis, sessionKeyServer);
 
 			/*
-			 * Encrypt with serverKey
+			 * Erstellung des Sessionkey(Client, TGS-Server)
+			 */
+			long sessionKeyClientServer = this.generateSimpleKey();
+
+			/*
+			 * Erstellung des ServerTicket
+			 */
+			Ticket serverTicket = new Ticket(tgsTicket.getClientName(), serverName, System.currentTimeMillis(),
+					System.currentTimeMillis() + this.tenHoursInMillis, sessionKeyClientServer);
+
+			/*
+			 * Verschlüsseln des ServerTicket mit dem Key: Server
 			 */
 			serverTicket.encrypt(this.getServerKey(serverName));
 
 			/*
 			 * TicketRespone
 			 */
-			TicketResponse ticketResponse = new TicketResponse(sessionKeyServer, nonce, serverTicket);
+			TicketResponse ticketResponse = new TicketResponse(sessionKeyClientServer, nonce, serverTicket);
 
+			/*
+			 * TicketRespone verschlüsseln mit dem SessionKey(Client, TGS-Server)
+			 */
 			ticketResponse.encrypt(tgsTicket.getSessionKey());
 
 			return ticketResponse;
@@ -210,7 +237,8 @@ public class KDC extends Object {
 	}
 
 	private long generateSimpleKeyForPassword(char[] pw) {
-		// Liefert einen Schlï¿½ssel fï¿½r ein Passwort zurï¿½ck, hier simuliert als
+		// Liefert einen Schlï¿½ssel fï¿½r ein Passwort zurï¿½ck, hier simuliert
+		// als
 		// long-Wert
 		long pwKey = 0;
 		for (int i = 0; i < pw.length; i++) {

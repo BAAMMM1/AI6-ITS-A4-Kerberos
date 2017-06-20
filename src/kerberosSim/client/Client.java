@@ -16,9 +16,9 @@ public class Client extends Object {
 
 	private KDC myKDC; // Konstruktor-Parameter
 
-	private String currentUser; // Speicherung bei Login n�tig
-	private Ticket tgsTicket = null; // Speicherung bei Login n�tig
-	private long tgsSessionKey; // K(C,TGS) // Speicherung bei Login n�tig
+	private String currentUser; // Speicherung bei Login nï¿½tig
+	private Ticket tgsTicket = null; // Speicherung bei Login nï¿½tig
+	private long tgsSessionKey; // K(C,TGS) // Speicherung bei Login nï¿½tig
 
 	private static final String TGS_SERVERNAME = "myTGS";
 	private static final String COMMAND_SHOWFILE = "showFile";
@@ -29,112 +29,112 @@ public class Client extends Object {
 	}
 
 	/**
-	 * Diese Mehtode holt TGS‐Ticket für den übergebenen Benutzer vom KDC (AS)
-	 * (TGS‐Servername: myTGS) und speichert diese zusammen mit dem
-	 * TGS‐Sessionkey und dem UserNamen ab.
+	 * Diese Mehtode holt TGSâ€�Ticket fÃ¼r den Ã¼bergebenen Benutzer vom KDC
+	 * (AS) (TGSâ€�Servername: myTGS) und speichert diese zusammen mit dem
+	 * TGSâ€�Sessionkey und dem UserNamen ab.
 	 * 
 	 * @param userName
-	 *            übergebenen Benutzer
+	 *            Ã¼bergebenen Benutzer
 	 * @param password
-	 *            übergebenes Passwort
+	 *            Ã¼bergebenes Passwort
 	 * @return Status (Login ok / fehlgeschlagen)
 	 */
 	public boolean login(String userName, char[] password) {
 		System.out.println("user login");
 
 		/*
-		 * Teil 1. Abholen des TGS-Ticket vom KDC für den übergebenen Benutzer
+		 * Teil 1. Abholen des TGS-Ticket vom KDC fÃ¼r den Ã¼bergebenen Benutzer
 		 * und dem TGS-Servername. Ebenfalls wird eine nonce (einmal Zahl)
-		 * übermittelt.
+		 * Ã¼bermittelt.
 		 */
 		long nonce = this.generateNonce();
-		
-		System.out.println("");
-		
-		TicketResponse myKDCTGSTicketResponse = this.myKDC.requestTGSTicket(userName, TGS_SERVERNAME, nonce);
 
-		if (myKDCTGSTicketResponse != null) {
-			System.out.println("1");
+		/*
+		 * 1. Auf los schicken
+		 */
+		TicketResponse KDC_AS_ticketResponse = this.myKDC.requestTGSTicket(userName, TGS_SERVERNAME, nonce);
+
+		/*
+		 * 2. Erhalten und prüfen
+		 */
+		if (KDC_AS_ticketResponse != null) {
 			/*
-			 * Falls ein TicketRespone erhalten wird, müssen wir folgende
-			 * Eigenschaften überprüfen.
+			 * Falls ein TicketRespone erhalten wird, mÃ¼ssen wir folgende
+			 * Eigenschaften Ã¼berprÃ¼fen.
 			 */
 
 			/*
-			 * Prüfen oder das TicketRespone bereits entschlüsselt ist oder ob
-			 * der Key falsch ist. (Wie bei decrypt)
+			 * PrÃ¼fen oder das TicketRespone bereits entschlÃ¼sselt ist oder ob
+			 * der Key falsch ist und entschlüsselung des TicketRespone mit dem
+			 * Key: Client
 			 */
-			
-			if (!myKDCTGSTicketResponse.decrypt(this.generateSimpleKeyFromPassword(password))) {
-				System.out.println("2");
-				myKDCTGSTicketResponse.printError("error - dcrypting: password is incorrect");
+
+			if (!KDC_AS_ticketResponse.decrypt(this.generateSimpleKeyFromPassword(password))) {
+				KDC_AS_ticketResponse.printError("error - dcrypting: password is incorrect");
 				return false;
-				
+
 				/*
-				 * Prüfen ob die übermittelte nonce mit der erhaltenen nonce des
-				 * TicketRespone übereinstimmt. (replay attack)
-				 *  */
-			} else if (nonce != myKDCTGSTicketResponse.getNonce()) {
-				System.out.println("3");
-				
-				myKDCTGSTicketResponse.printError("error - nonce: is incorrect");
+				 * PrÃ¼fen ob die Ã¼bermittelte nonce mit der erhaltenen nonce
+				 * des TicketRespone Ã¼bereinstimmt. (replay attack)
+				 */
+			} else if (nonce != KDC_AS_ticketResponse.getNonce()) {
+				KDC_AS_ticketResponse.printError("error - nonce: is incorrect");
 				return false;
+
+			} else {
+
+				/*
+				 * Teil 2. Wenn das TicketRespone valid ist, wird das Ticket,
+				 * der SessionKey und der Username abgespeichert.
+				 */
+
+				/*
+				 * 1. Setzen des Benutzernamen
+				 */
+				this.currentUser = userName;
+
+				/*
+				 * 2. Setzen des erhaltenen Ticket
+				 */
+				this.tgsTicket = KDC_AS_ticketResponse.getResponseTicket();
+
+				/*
+				 * Setzen des erhaltenen SessionsKey
+				 */
+				this.tgsSessionKey = KDC_AS_ticketResponse.getSessionKey();
+
+				/*
+				 * Ausgabe des ticketRespone
+				 */
+				KDC_AS_ticketResponse.print();
+
+				return true;
 			}
-
-			System.out.println("4");
-			/*
-			 * Teil 2. Wenn das TicketRespone valid ist, wird das Ticket, der
-			 * SessionKey und der Username abgespeichert.
-			 */
-
-			/*
-			 * 1. Setzen des Benutzernamen
-			 */
-			this.currentUser = userName;
-
-			/*
-			 * 2. Setzen des erhaltenen Ticket
-			 */
-			this.tgsTicket = myKDCTGSTicketResponse.getResponseTicket();
-
-			/*
-			 * Setzen des erhaltenen SessionsKey
-			 */
-			this.tgsSessionKey = myKDCTGSTicketResponse.getSessionKey();
-
-			/*
-			 * Ausgabe des ticketRespone
-			 */
-			myKDCTGSTicketResponse.print();
-
-			return true;
 
 		} else {
 			/*
-			 * Wenn der TicketRespone als null zurückkommt, ist entweder der
+			 * Wenn der TicketRespone als null zurÃ¼ckkommt, ist entweder der
 			 * Benutzername oder der Servername falsch.
 			 */
 			System.out.println("error - login: username or tgsServer incorrect");
 			return false;
 		}
-	
-		
 
 	}
 
 	/**
 	 * Diese Methode holt ein Serverticket vom KDC (TGS) und fordert den
-	 * „showFile“‐Service beim übergebenen Fileserver an.
+	 * â€žshowFileâ€œâ€�Service beim Ã¼bergebenen Fileserver an.
 	 * 
 	 * 1. Authentifikation beim angegebenen Server.
 	 * 
-	 * 2. Ausführung der showFile des Servers.
+	 * 2. AusfÃ¼hrung der showFile des Servers.
 	 * 
 	 * @param fileServer
-	 *            übergebenen Fileserver
+	 *            Ã¼bergebenen Fileserver
 	 * @param filePath
-	 *            filepath auf dem übergebenen Server
-	 * @return Status (Befehlsausführung ok / fehlgeschlagen)
+	 *            filepath auf dem Ã¼bergebenen Server
+	 * @return Status (BefehlsausfÃ¼hrung ok / fehlgeschlagen)
 	 */
 	public boolean showFile(Server fileServer, String filePath) {
 		System.out.println("show file from client");
@@ -144,86 +144,93 @@ public class Client extends Object {
 		 */
 
 		/*
-		 * Authentifikation für den Benutzernamen erstellen.
+		 * Authentifikation fÃ¼r den Benutzernamen erstellen.
 		 */
-		Auth authentifikation = new Auth(this.currentUser, System.currentTimeMillis());
-		
+		Auth authFor_KDC_TGS = new Auth(this.currentUser, System.currentTimeMillis());
+
 		/*
-		 * Authenfikation mit dem SessionKey verschlüsseln.
+		 * Authenfikation mit dem SessionKey(Client, TGS-Server) verschlÃ¼sseln.
 		 */
-		authentifikation.encrypt(tgsSessionKey);
-		
-		authentifikation.print();
-	
+		authFor_KDC_TGS.encrypt(tgsSessionKey);
 
-		long nonce = this.generateNonce();
+		authFor_KDC_TGS.print();
 
-		TicketResponse serverTicketTicketResponse = this.myKDC.requestServerTicket(tgsTicket, authentifikation,
-				fileServer.getName(), nonce);
-		
-		if (serverTicketTicketResponse != null) {
-			System.out.println("serverticket nicht null");
+		long nonce2 = this.generateNonce();
+
+		/*
+		 * Wir schicken Nachricht 3. los
+		 */
+		TicketResponse KDC_TGS_ticketResponse = this.myKDC.requestServerTicket(tgsTicket, authFor_KDC_TGS,
+				fileServer.getName(), nonce2);
+		/*
+		 * und erhalten Nachricht 4.
+		 */
+
+		if (KDC_TGS_ticketResponse != null) {
+			System.out.println("KDC_TGS_ticketResponse nicht null");
 			/*
-			 * Falls ein TicketRespone erhalten wird, müssen wir folgende
-			 * Eigenschaften überprüfen.
+			 * Falls ein TicketRespone erhalten wird, mÃ¼ssen wir folgende
+			 * Eigenschaften Ã¼berprÃ¼fen.
 			 */
 
 			/*
-			 * Prüfen oder das TicketRespone bereits entschlüsselt ist oder ob
-			 * der Key falsch ist. (Wie bei decrypt)
-			 * Achtung decrypt mit dem tgsSessionKey
+			 * PrÃ¼fen ob das TicketRespone bereits entschlÃ¼sselt ist oder ob
+			 * der Key falsch ist. (Wie bei decrypt) ServerTicket entschlüsseln
+			 * mit SessionKey(Client,TGS-Server)
 			 */
-			if (!serverTicketTicketResponse.decrypt(this.tgsSessionKey)) {
-				System.out.println("1");
-				serverTicketTicketResponse.printError("error - dcrypting: password is incorrect");
+			if (!KDC_TGS_ticketResponse.decrypt(this.tgsSessionKey)) {
+				KDC_TGS_ticketResponse.printError("error - dcrypting: password is incorrect");
 				return false;
-				
+
 				/*
-				 * Prüfen ob die übermittelte nonce mit der erhaltenen nonce des
-				 * TicketRespone übereinstimmt. (replay attack)
+				 * PrÃ¼fen ob die Ã¼bermittelte nonce mit der erhaltenen nonce
+				 * des TicketRespone Ã¼bereinstimmt. (replay attack)
 				 */
-			} else if (nonce != serverTicketTicketResponse.getNonce()) {
-				System.out.println("2");
-				serverTicketTicketResponse.printError("error - nonce: is incorrect");
+			} else if (nonce2 != KDC_TGS_ticketResponse.getNonce()) {
+				KDC_TGS_ticketResponse.printError("error - nonce: is incorrect");
 				return false;
 			}
-			System.out.println("4");
 			/*
-			 * Ausgabe des ticketRespone
+			 * 4. KDC_TGS_TicketRespone erfolgreich erhalten Ausgabe des
+			 * ticketRespone
 			 */
-			serverTicketTicketResponse.print();
-			
+			KDC_TGS_ticketResponse.print();
+
 			/*
-			 * Teil 2. Beim Server atuhentifizieren und showFile ausführen
+			 * Teil 2. showFile ausfÃ¼hren Zusammenbau von 5.
 			 */
 
-			Auth serverAuthentifikation = new Auth(this.currentUser, System.currentTimeMillis());
+			Auth authForServer = new Auth(this.currentUser, System.currentTimeMillis());
 
-			serverAuthentifikation.encrypt(serverTicketTicketResponse.getSessionKey());
-			
-			serverAuthentifikation.print();						
+			/*
+			 * Verschlüssen mit SessionKey(Client, Server)
+			 */
+			authForServer.encrypt(KDC_TGS_ticketResponse.getSessionKey());
 
-			return fileServer.requestService(serverTicketTicketResponse.getResponseTicket(), serverAuthentifikation,
+			authForServer.print();
+
+			/*
+			 * Übermitteln von 5. an den Server S
+			 */
+			return fileServer.requestService(KDC_TGS_ticketResponse.getResponseTicket(), authForServer,
 					COMMAND_SHOWFILE, filePath);
 
 		} else {
 			/*
-			 * Wenn der TicketRespone als null zurückkommt, ist entweder der
+			 * Wenn der TicketRespone als null zurÃ¼ckkommt, ist entweder der
 			 * Benutzername oder der Servername falsch.
 			 */
 			System.out.println("error - login: username or fileServer incorrect");
 			return false;
 		}
 
-		
-
 	}
 
 	/* *********** Hilfsmethoden **************************** */
 
 	private long generateSimpleKeyFromPassword(char[] passwd) {
-		// Liefert einen eindeutig aus dem Passwort abgeleiteten Schl�ssel
-		// zur�ck, hier simuliert als long-Wert
+		// Liefert einen eindeutig aus dem Passwort abgeleiteten Schlï¿½ssel
+		// zurï¿½ck, hier simuliert als long-Wert
 		long pwKey = 0;
 		if (passwd != null) {
 			for (int i = 0; i < passwd.length; i++) {
